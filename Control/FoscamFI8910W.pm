@@ -1,3 +1,4 @@
+
 # ==========================================================================
 #
 # ZoneMinder Foscam FI8910W IP Control Protocol Module
@@ -76,7 +77,7 @@ sub open {
 
     use LWP::UserAgent;
     $self->{ua} = LWP::UserAgent->new;
-    $self->{ua}->agent( "ZoneMinder Control Agent/" . ZM_VERSION );
+    $self->{ua}->agent( "ZoneMinder Control Agent/" );
 
     $self->{state} = 'open';
 }
@@ -127,67 +128,133 @@ sub cameraReset {
     $self->sendCmd($cmd);
 }
 
-sub moveConUp {
+sub moveConUp
+{
     my $self = shift;
-    Debug("Move Up");
-    my $cmd = "decoder_control.cgi?command=0";
-    $self->sendCmd($cmd);
+    my $params = shift;
+    Debug( "Move Up" );
+    my $cmd = "decoder_control.cgi?command=0&";
+    $self->sendCmd( $cmd );
+    my $autostop = $self->getParam( $params, 'autostop', 0 );
+    if ( $autostop && $self->{Monitor}->{AutoStopTimeout} )
+    {
+        usleep( $self->{Monitor}->{AutoStopTimeout} );
+        $self->moveStop( $params );
+    }
 }
 
-sub moveStop {
+sub moveConDown
+{
     my $self = shift;
-    Debug("Move Stop");
-    my $cmd = "decoder_control.cgi?command=1";
-    $self->sendCmd($cmd);
+    my $params = shift;
+    Debug( "Move Down" );
+    my $cmd = "decoder_control.cgi?command=2&";
+    $self->sendCmd( $cmd );
+    my $autostop = $self->getParam( $params, 'autostop', 0 );
+    if ( $autostop && $self->{Monitor}->{AutoStopTimeout} )
+    {
+        usleep( $self->{Monitor}->{AutoStopTimeout} );
+        $self->moveStop( $params );
+    }
 }
 
-sub moveConDown {
+sub moveConLeft
+{
     my $self = shift;
-    Debug("Move Down");
-    my $cmd = "decoder_control.cgi?command=2";
-    $self->sendCmd($cmd);
+    my $params = shift;
+    Debug( "Move Left" );
+    my $cmd = "decoder_control.cgi?command=4&";
+    $self->sendCmd( $cmd );
+    my $autostop = $self->getParam( $params, 'autostop', 0 );
+    if ( $autostop && $self->{Monitor}->{AutoStopTimeout} )
+    {
+        usleep( $self->{Monitor}->{AutoStopTimeout} );
+        $self->moveStop( $params );
+    }
 }
 
-sub moveConLeft {
+sub moveConRight
+{
     my $self = shift;
-    Debug("Move Left");
-    my $cmd = "decoder_control.cgi?command=6";
-    $self->sendCmd($cmd);
+    my $params = shift;
+    Debug( "Move Right" );
+    my $cmd = "decoder_control.cgi?command=6&";
+    $self->sendCmd( $cmd );
+    my $autostop = $self->getParam( $params, 'autostop', 0 );
+    if ( $autostop && $self->{Monitor}->{AutoStopTimeout} )
+    {
+        usleep( $self->{Monitor}->{AutoStopTimeout} );
+        $self->moveStop( $params );
+    }
 }
 
-sub moveConRight {
+sub moveConUpRight
+{
     my $self = shift;
-    Debug("Move Right");
-    my $cmd = "decoder_control.cgi?command=4";
-    $self->sendCmd($cmd);
+    my $params = shift;
+    Debug( "Move Diagonally Up Right" );
+    my $cmd = "decoder_control.cgi?command=91&";
+    $self->sendCmd( $cmd );
+    my $autostop = $self->getParam( $params, 'autostop', 0 );
+    if ( $autostop && $self->{Monitor}->{AutoStopTimeout} )
+    {
+        usleep( $self->{Monitor}->{AutoStopTimeout} );
+        $self->moveStop( $params );
+    }
 }
 
-sub moveConUpRight {
+sub moveConDownRight
+{
     my $self = shift;
-    Debug("Move Diagonally Up Right");
-    my $cmd = "decoder_control.cgi?command=90";
-    $self->sendCmd($cmd);
+    my $params = shift;
+    Debug( "Move Diagonally Down Right" );
+    my $cmd = "decoder_control.cgi?command=93&";
+    $self->sendCmd( $cmd );
+    my $autostop = $self->getParam( $params, 'autostop', 0 );
+    if ( $autostop && $self->{Monitor}->{AutoStopTimeout} )
+    {
+        usleep( $self->{Monitor}->{AutoStopTimeout} );
+        $self->moveStop( $params );
+    }
 }
 
-sub moveConDownRight {
+sub moveConUpLeft
+{
     my $self = shift;
-    Debug("Move Diagonally Down Right");
-    my $cmd = "decoder_control.cgi?command=92";
-    $self->sendCmd($cmd);
+    my $params = shift;
+    Debug( "Move Diagonally Up Left" );
+    my $cmd = "decoder_control.cgi?command=90&";
+    $self->sendCmd( $cmd );
+    my $autostop = $self->getParam( $params, 'autostop', 0 );
+    if ( $autostop && $self->{Monitor}->{AutoStopTimeout} )
+    {
+        usleep( $self->{Monitor}->{AutoStopTimeout} );
+        $self->moveStop( $params );
+    }
 }
 
-sub moveConUpLeft {
+sub moveConDownLeft
+{
     my $self = shift;
-    Debug("Move Diagonally Up Left");
-    my $cmd = "decoder_control.cgi?command=91";
-    $self->sendCmd($cmd);
+    my $params = shift;
+    Debug( "Move Diagonally Down Left" );
+    my $cmd = "decoder_control.cgi?command=92&";
+    $self->sendCmd( $cmd );
+    my $autostop = $self->getParam( $params, 'autostop', 0 );
+    if ( $autostop && $self->{Monitor}->{AutoStopTimeout} )
+    {
+        usleep( $self->{Monitor}->{AutoStopTimeout} );
+        $self->moveStop( $params );
+    }
 }
 
-sub moveConDownLeft {
+sub moveStop
+{
     my $self = shift;
-    Debug("Move Diagonally Down Left");
-    my $cmd = "decoder_control.cgi?command=93";
-    $self->sendCmd($cmd);
+    Debug( "Move Stop" );
+    print("autostop\n");
+    my $cmd = "decoder_control.cgi?command=1&";
+    $self->sendCmd( $cmd );
 }
 
 sub presetClear {
@@ -209,14 +276,15 @@ sub presetSet {
     $self->sendCmd($cmd);
 }
 
-sub presetGoto {
-    my $self      = shift;
-    my $params    = shift;
-    my $preset    = $self->getParam( $params, 'preset' );
-    my $presetCmd = 31 + ( $preset * 2 );
-    Debug("Goto Preset $preset: $presetCmd");
-    my $cmd = "decoder_control.cgi?command=$presetCmd";
-    $self->sendCmd($cmd);
+sub presetGoto
+{
+    my $self = shift;
+    my $params = shift;
+    my $preset = $self->getParam( $params, 'preset' );
+    my $presetCmd = 31 + (($preset-1)*2);
+    Debug( "Goto Preset $preset with cmd $presetCmd" );
+    my $cmd = "decoder_control.cgi?command=$presetCmd&";
+    $self->sendCmd( $cmd );
 }
 
 sub presetHome {
